@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Planning Calendar | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #66bb6a;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg); color: white; min-height: 100vh; }
+        
+        nav { padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+        
+        h2 { text-align: center; font-size: 3rem; margin-bottom: 40px; color: var(--primary-light); }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .month-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            transition: 0.3s;
+        }
+
+        .month-card:hover { border-color: var(--primary-light); transform: translateY(-5px); }
+
+        .month-name { font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; color: var(--primary-light); display: flex; justify-content: space-between; }
+        
+        .task-list { list-style: none; }
+        .task-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-badge {
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .task-sowing { background: #4caf50; color: white; }
+        .task-irrigation { background: #2196f3; color: white; }
+        .task-fertilizer { background: #ff9800; color: white; }
+        .task-harvest { background: #f44336; color: white; }
+
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .filter-btn.active { background: var(--primary); border-color: var(--primary); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+    </nav>
+
+    <div class="container">
+        <h2>Farm Planning Calendar 2026</h2>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active">All Tasks</button>
+            <button class="filter-btn">Sowing</button>
+            <button class="filter-btn">Irrigation</button>
+            <button class="filter-btn">Harvest</button>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="month-card">
+                <div class="month-name">January <span>❄️</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Wheat Irrigation (1st cycle)</li>
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Top dressing Urea for Rabi</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">February <span>☀️</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Mustard flowering irrigation</li>
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Potash application</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">March <span>🌾</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-harvest">Harv</span> Wheat Harvesting begins</li>
+                    <li class="task-item"><span class="task-badge task-harvest">Harv</span> Mustard Harvesting</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">April <span>🔥</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-sowing">Sow</span> Zaid Crop (Moong/Urad) sowing</li>
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Sugarcane irrigation</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">May <span>🌡️</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Frequent watering for Summer crops</li>
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Land preparation for Kharif</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">June <span>🌧️</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-sowing">Sow</span> Rice (Paddy) Nursery sowing</li>
+                    <li class="task-item"><span class="task-badge task-sowing">Sow</span> Cotton/Maize sowing</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">July <span>⚡</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-sowing">Sow</span> Rice Transplating</li>
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Basal dose for Kharif</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">August <span>💧</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Drainage management for heavy rain</li>
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Weed control application</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">September <span>🌪️</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Final top dressing for Paddy</li>
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Pest monitoring (BPH/Blast)</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">October <span>🍂</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-harvest">Harv</span> Rice Harvesting begins</li>
+                    <li class="task-item"><span class="task-badge task-sowing">Sow</span> Potato / Onion sowing</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">November <span>🧣</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-sowing">Sow</span> Wheat (Rabi) sowing begins</li>
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> Pre-sowing irrigation</li>
+                </ul>
+            </div>
+            <div class="month-card">
+                <div class="month-name">December <span>🧥</span></div>
+                <ul class="task-list">
+                    <li class="task-item"><span class="task-badge task-irrigation">Irrig</span> CRI stage irrigation for Wheat</li>
+                    <li class="task-item"><span class="task-badge task-fertilizer">Fert</span> Micronutrient application</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

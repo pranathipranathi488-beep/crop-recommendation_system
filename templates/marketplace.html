@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Marketplace | CropGuard — Connect Directly with Farmers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32; --primary-light: #4caf50; --accent: #ffc107;
+            --bg: #0a0a0a; --glass: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: linear-gradient(135deg, #050f05 0%, #0a1a0a 100%); color: white; min-height: 100vh; }
+
+        nav {
+            padding: 18px 50px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover { color: var(--primary-light); }
+        .btn-register { background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; text-decoration: none; }
+
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 7px 14px;
+            border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600;
+            outline: none; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 8px center; background-size: 0.9em; padding-right: 28px;
+        }
+
+        .page-hero {
+            text-align: center; padding: 60px 20px 40px;
+        }
+        .page-hero h1 { font-size: 3rem; background: linear-gradient(to right, #fff, #81c784); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+        .page-hero p { color: #aaa; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .hero-stats { display: flex; gap: 30px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+        .hero-stat { text-align: center; }
+        .hero-stat .val { font-size: 2rem; font-weight: 800; color: var(--primary-light); }
+        .hero-stat .lbl { font-size: 0.8rem; color: #888; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
+
+        /* ── FILTER BAR ── */
+        .filter-bar {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 16px;
+            padding: 20px 25px; margin-bottom: 35px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;
+        }
+        .filter-label { font-size: 0.85rem; color: #aaa; font-weight: 600; white-space: nowrap; }
+        .filter-chips { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+        .chip {
+            padding: 7px 18px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            border: 1px solid var(--border); transition: 0.2s; text-decoration: none; color: #aaa;
+        }
+        .chip:hover, .chip.active { background: var(--primary); border-color: var(--primary-light); color: white; }
+        .chip.active { background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white; }
+
+        /* ── FARMER CARDS GRID ── */
+        .farmers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 24px; }
+
+        .farmer-card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px;
+            padding: 28px; transition: 0.4s; animation: fadeInUp 0.5s ease backwards;
+            position: relative; overflow: hidden;
+        }
+        .farmer-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+        .farmer-card:hover { transform: translateY(-6px); border-color: var(--primary-light); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+        .farmer-avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+        }
+        .crop-tag { background: rgba(76,175,80,0.15); color: var(--primary-light); padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(76,175,80,0.3); }
+
+        .farmer-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+        .farmer-village { color: #aaa; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+        .info-item { background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 10px; }
+        .info-label { font-size: 0.68rem; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-value { font-size: 0.9rem; font-weight: 700; color: #eee; margin-top: 2px; }
+
+        .contact-bar { display: flex; gap: 10px; margin-top: 18px; }
+        .call-btn {
+            flex: 1; padding: 12px; background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            color: white; text-decoration: none; border-radius: 12px;
+            font-weight: 700; font-size: 0.9rem; text-align: center;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .call-btn:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
+        .view-btn {
+            padding: 12px 18px; background: rgba(255,255,255,0.05);
+            color: white; text-decoration: none; border-radius: 12px; border: 1px solid var(--border);
+            font-weight: 700; font-size: 0.9rem; transition: 0.3s; display: flex; align-items: center; gap: 6px;
+        }
+        .view-btn:hover { border-color: var(--primary-light); background: rgba(76,175,80,0.05); }
+
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align: center; padding: 80px 20px; grid-column: 1/-1; }
+        .empty-state h3 { font-size: 2rem; color: #444; margin-bottom: 12px; }
+        .empty-state p { color: #666; margin-bottom: 25px; }
+        .empty-state a { background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white; text-decoration: none; padding: 14px 35px; border-radius: 50px; font-weight: 700; }
+
+        .results-count { color: #aaa; font-size: 0.9rem; margin-bottom: 20px; }
+        .results-count span { color: var(--primary-light); font-weight: 700; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .farmer-card:nth-child(1) { animation-delay: 0.1s; }
+        .farmer-card:nth-child(2) { animation-delay: 0.2s; }
+        .farmer-card:nth-child(3) { animation-delay: 0.3s; }
+        .farmer-card:nth-child(4) { animation-delay: 0.4s; }
+        .farmer-card:nth-child(5) { animation-delay: 0.5s; }
+        .farmer-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @media (max-width: 600px) {
+            nav { padding: 15px 20px; }
+            .page-hero h1 { font-size: 2rem; }
+            .farmers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/recommend">Recommend</a>
+            <a href="/farmer/register" class="btn-register">+ Register Farm</a>
+            <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="te">తెలుగు</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <div class="page-hero">
+        <h1>🛒 Crop Marketplace</h1>
+        <p>Connect directly with local farmers. No middlemen. Buy fresh crops straight from the field.</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="val">{{ farmers | length }}</div>
+                <div class="lbl">Registered Farmers</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">{{ crop_list | length }}</div>
+                <div class="lbl">Crop Types</div>
+            </div>
+            <div class="hero-stat">
+                <div class="val">0%</div>
+                <div class="lbl">Commission (Free)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- ── FILTER BAR ── -->
+        <div class="filter-bar">
+            <span class="filter-label">🔍 Filter by Crop:</span>
+            <div class="filter-chips">
+                <a href="/marketplace" class="chip {% if not crop_filter %}active{% endif %}">All Crops</a>
+                {% for crop in crop_list %}
+                <a href="/marketplace?crop={{ crop }}" class="chip {% if crop_filter == crop %}active{% endif %}">{{ crop }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ── COUNT ── -->
+        {% if farmers %}
+        <div class="results-count">
+            Showing <span>{{ farmers | length }}</span> farmer{% if farmers | length != 1 %}s{% endif %}
+            {% if crop_filter %}growing <span>{{ crop_filter }}</span>{% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ── FARMERS GRID ── -->
+        <div class="farmers-grid">
+            {% if farmers %}
+                {% for f in farmers %}
+                <div class="farmer-card">
+                    <div class="card-top">
+                        <div class="farmer-avatar">👨‍🌾</div>
+                        <div class="crop-tag">{{ f.crop }}</div>
+                    </div>
+
+                    <div class="farmer-name">{{ f.name }}</div>
+                    <div class="farmer-village">📍 {{ f.village }}</div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Farm Type</div>
+                            <div class="info-value">{{ f.farm_type }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Total Acres</div>
+                            <div class="info-value">{{ f.acres }} Ac</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Expected Yield</div>
+                            <div class="info-value">{{ f.expected_yield }} T/Ac</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Seed Quantity</div>
+                            <div class="info-value">{{ f.seed_quantity }}</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-bar">
+                        <a href="tel:{{ f.contact }}" class="call-btn">📞 Call Farmer</a>
+                        <a href="/farmer/dashboard/{{ f._id }}" class="view-btn">📋 View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <h3>🌱 No Farmers Listed Yet</h3>
+                    <p>Be the first to register your farm and connect with buyers!</p>
+                    <a href="/farmer/register">Register Your Farm</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = saved;
+        });
+    </script>
+</body>
+</html>

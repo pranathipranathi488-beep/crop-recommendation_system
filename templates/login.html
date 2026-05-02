@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a2e1a 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 50px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(to right, #ffffff, #81c784);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .switch a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .flash-danger { background: rgba(244, 67, 54, 0.2); color: #ff8a80; border: 1px solid rgba(244, 67, 54, 0.3); }
+        .flash-success { background: rgba(76, 175, 80, 0.2); color: #b9f6ca; border: 1px solid rgba(76, 175, 80, 0.3); }
+        .flash-warning { background: rgba(255, 152, 0, 0.2); color: #ffd180; border: 1px solid rgba(255, 152, 0, 0.3); }
+
+        .lang-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Language Selector */
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+            padding-right: 35px;
+        }
+        .lang-select:hover { border-color: var(--primary-light); background: #1a1a1a; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-container">
+        <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+        </select>
+    </div>
+
+    <div class="auth-card">
+        <h2 data-i18n="login_title">Welcome Back</h2>
+        <p class="subtitle" data-i18n="login_subtitle">Log in to your CropGuard account</p>
+
+
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: absolute; top: 100px; right: 20px; z-index: 1000; padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.9); color: #000;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label data-i18n="lbl_email">Email Address</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label data-i18n="lbl_password">Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn" data-i18n="btn_login">Login</button>
+        </form>
+
+        <div class="switch">
+            <span data-i18n="login_no_acc">Don't have an account?</span> <a href="/signup" data-i18n="link_signup">Sign Up</a>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                login_title: "Welcome Back", login_subtitle: "Log in to your CropGuard account",
+                lbl_email: "Email Address", lbl_password: "Password", btn_login: "Login",
+                login_no_acc: "Don't have an account?", link_signup: "Sign Up"
+            },
+            hi: {
+                login_title: "वापसी पर स्वागत है", login_subtitle: "अपने क्रॉपगार्ड खाते में लॉग इन करें",
+                lbl_email: "ईमेल पता", lbl_password: "पासवर्ड", btn_login: "लॉगिन",
+                login_no_acc: "खाता नहीं है?", link_signup: "साइन अप करें"
+            },
+            te: {
+                login_title: "తిరిగి స్వాగతం", login_subtitle: "మీ క్రాప్‌గార్డ్ ఖాతాలోకి లాగిన్ అవ్వండి",
+                lbl_email: "ఇమెయిల్ చిరునామా", lbl_password: "పాస్‌వర్డ్", btn_login: "లాగిన్",
+                login_no_acc: "ఖాతా లేదా?", link_signup: "సైన్ అప్ చేయండి"
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+            applyLanguage(lang);
+        }
+
+        function applyLanguage(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = savedLang;
+            applyLanguage(savedLang);
+        });
+    </script>
+</body>
+</html>
+

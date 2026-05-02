@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ farmer.name }}'s Farm Dashboard | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32; --primary-light: #4caf50; --accent: #ffc107;
+            --bg: #0a0a0a; --glass: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: linear-gradient(135deg, #050f05 0%, #0a1a0a 100%); color: white; min-height: 100vh; }
+
+        nav {
+            padding: 18px 50px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover { color: var(--primary-light); }
+        .btn-edit {
+            background: linear-gradient(135deg, #1565c0, #42a5f5);
+            color: white; text-decoration: none; padding: 8px 20px;
+            border-radius: 20px; font-weight: 700; font-size: 0.85rem;
+        }
+
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 7px 14px;
+            border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600;
+            outline: none; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 8px center; background-size: 0.9em; padding-right: 28px;
+        }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+
+        /* ── HERO CARD ── */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(46,125,50,0.2), rgba(27,94,32,0.1));
+            border: 1px solid rgba(76,175,80,0.3); border-radius: 24px;
+            padding: 35px 40px; margin-bottom: 30px; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        .farmer-name { font-size: 2rem; font-weight: 800; color: white; }
+        .farmer-meta { color: #aaa; font-size: 1rem; margin-top: 5px; }
+        .farmer-meta span { color: var(--primary-light); font-weight: 600; }
+
+        .progress-section { text-align: right; }
+        .progress-label { font-size: 0.8rem; color: #aaa; margin-bottom: 8px; }
+        .progress-ring { position: relative; width: 100px; height: 100px; margin: 0 auto; }
+        .progress-ring svg { transform: rotate(-90deg); }
+        .progress-ring circle { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
+        .progress-ring .fill { stroke: var(--primary-light); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+        .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .ring-text .pct { font-size: 1.4rem; font-weight: 800; color: var(--primary-light); }
+        .ring-text .lbl { font-size: 0.65rem; color: #aaa; }
+
+        /* ── STATS GRID ── */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; margin-bottom: 30px; }
+        .stat-card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 16px;
+            padding: 20px 22px; text-align: center; transition: 0.3s;
+        }
+        .stat-card:hover { border-color: var(--primary-light); transform: translateY(-3px); }
+        .stat-icon { font-size: 1.8rem; margin-bottom: 6px; }
+        .stat-val { font-size: 1.4rem; font-weight: 800; color: white; }
+        .stat-lbl { font-size: 0.75rem; color: #888; margin-top: 3px; }
+
+        /* ── TODAY'S TASK ── */
+        .today-task {
+            background: linear-gradient(135deg, rgba(255,193,7,0.15), rgba(255,152,0,0.1));
+            border: 1px solid rgba(255,193,7,0.4); border-radius: 20px;
+            padding: 25px 30px; margin-bottom: 30px;
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+            animation: pulse 2s infinite;
+        }
+        .today-task-icon { font-size: 3rem; }
+        .today-task-content h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 5px; }
+        .today-task-content p { color: #ccc; font-size: 0.95rem; line-height: 1.5; }
+        .today-tag { background: var(--accent); color: #000; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; display: inline-block; margin-bottom: 8px; }
+        .no-task { background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.2); border-radius: 20px; padding: 25px; text-align: center; color: #aaa; margin-bottom: 30px; }
+
+        /* ── TIMELINE ── */
+        .timeline-section { margin-bottom: 30px; }
+        .section-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; color: white; display: flex; align-items: center; gap: 10px; }
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item {
+            display: flex; align-items: flex-start; gap: 18px;
+            padding: 16px 20px; border-radius: 14px; border: 1px solid transparent; transition: 0.3s;
+        }
+        .timeline-item.done     { background: rgba(255,255,255,0.02); opacity: 0.5; }
+        .timeline-item.today    { background: rgba(255,193,7,0.12); border-color: rgba(255,193,7,0.35); }
+        .timeline-item.upcoming { background: var(--glass); border-color: var(--border); }
+        .timeline-item.today:hover, .timeline-item.upcoming:hover { border-color: var(--primary-light); }
+
+        .t-icon { font-size: 1.5rem; width: 40px; text-align: center; flex-shrink: 0; }
+        .t-day  { font-size: 0.7rem; color: #666; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; }
+        .t-title { font-size: 0.95rem; font-weight: 700; }
+        .timeline-item.done .t-title { text-decoration: line-through; color: #555; }
+        .timeline-item.today .t-title { color: var(--accent); }
+        .t-detail { font-size: 0.82rem; color: #888; margin-top: 4px; }
+
+        .t-badge {
+            margin-left: auto; padding: 3px 10px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 800; flex-shrink: 0; align-self: center;
+        }
+        .badge-done     { background: rgba(255,255,255,0.1); color: #666; }
+        .badge-today    { background: var(--accent); color: #000; }
+        .badge-upcoming { background: rgba(76,175,80,0.2); color: var(--primary-light); }
+
+        /* ── FARMER DETAILS ── */
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .detail-item { background: var(--glass); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; }
+        .detail-label { font-size: 0.72rem; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .detail-value { font-size: 1rem; font-weight: 700; color: white; }
+
+        .action-bar { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+        .action-btn {
+            flex: 1; min-width: 150px; padding: 14px 20px; border-radius: 50px;
+            text-decoration: none; text-align: center; font-weight: 700; font-size: 0.95rem; transition: 0.3s;
+        }
+        .btn-primary { background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(46,125,50,0.4); }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--primary-light); background: rgba(76,175,80,0.05); }
+        .btn-blue { background: linear-gradient(135deg, #1565c0, #42a5f5); color: white; }
+        .btn-blue:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(21,101,192,0.4); }
+
+        .flash-messages { margin-bottom: 20px; }
+        .flash { padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.9rem; }
+        .flash-success { background: rgba(76,175,80,0.15); color: #b9f6ca; border: 1px solid rgba(76,175,80,0.3); }
+
+        @keyframes pulse { 0%,100%{box-shadow: 0 0 0 0 rgba(255,193,7,0.3);} 50%{box-shadow: 0 0 0 8px rgba(255,193,7,0);} }
+
+        @media (max-width: 700px) {
+            nav { padding: 15px 20px; }
+            .hero-card { flex-direction: column; text-align: center; }
+            .details-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/marketplace">Marketplace</a>
+            <a href="/farmer/update/{{ farmer._id }}" class="btn-edit">✏️ Edit</a>
+            <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="te">తెలుగు</option>
+            </select>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: absolute; top: 100px; right: 20px; z-index: 1000; padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.9); color: #000;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+        <!-- ── HERO ── -->
+        <div class="hero-card">
+            <div>
+                <div class="farmer-name">🌾 {{ farmer.name }}</div>
+                <div class="farmer-meta">
+                    📍 {{ farmer.village }} &nbsp;|&nbsp;
+                    📱 <span>{{ farmer.contact }}</span> &nbsp;|&nbsp;
+                    🏡 {{ farmer.farm_type }}
+                </div>
+                <div class="farmer-meta" style="margin-top:8px;">
+                    Crop: <span>{{ farmer.crop }}</span> &nbsp;|&nbsp;
+                    Area: <span>{{ farmer.acres }} Acres</span> &nbsp;|&nbsp;
+                    Seeds: <span>{{ farmer.seed_quantity }}</span>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-label">Crop Cycle Progress</div>
+                <div class="progress-ring">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40"/>
+                        <circle class="fill" cx="50" cy="50" r="40"
+                            stroke-dasharray="251.2"
+                            stroke-dashoffset="{{ 251.2 - (251.2 * alert.progress / 100) }}"/>
+                    </svg>
+                    <div class="ring-text">
+                        <span class="pct">{{ alert.progress }}%</span>
+                        <span class="lbl">Done</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── STATS ── -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-val">Day {{ alert.days_elapsed }}</div>
+                <div class="stat-lbl">Days Elapsed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-val">{{ alert.days_remaining }}</div>
+                <div class="stat-lbl">Days Remaining</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🗓️</div>
+                <div class="stat-val">{{ alert.duration }}</div>
+                <div class="stat-lbl">Total Duration (days)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-val">{{ alert.tasks | length }}</div>
+                <div class="stat-lbl">Total Scheduled Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-val">{{ alert.tasks | selectattr('status','eq','done') | list | length }}</div>
+                <div class="stat-lbl">Tasks Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📆</div>
+                <div class="stat-val">{{ farmer.start_date.strftime('%d %b %Y') }}</div>
+                <div class="stat-lbl">Sowing Date</div>
+            </div>
+        </div>
+
+        <!-- ── TODAY'S TASK ── -->
+        {% if alert.today_task %}
+        <div class="today-task">
+            <div class="today-task-icon">{{ alert.today_task.icon }}</div>
+            <div class="today-task-content">
+                <div class="today-tag">⚡ TODAY'S TASK — Day {{ alert.today_task.day }}</div>
+                <h3>{{ alert.today_task.title }}</h3>
+                <p>{{ alert.today_task.detail }}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-task">
+            <div style="font-size:2rem;margin-bottom:8px;">✅</div>
+            <div style="font-size:1rem;font-weight:600;color:#ccc;">No specific task today — keep monitoring your crop!</div>
+            <div style="font-size:0.85rem;margin-top:5px;">Check the schedule below for upcoming activities.</div>
+        </div>
+        {% endif %}
+
+        <!-- ── ACTIVITY TIMELINE ── -->
+        <div class="timeline-section">
+            <div class="section-title">📋 Crop Activity Schedule</div>
+            <div class="timeline">
+                {% for task in alert.tasks %}
+                <div class="timeline-item {{ task.status }}">
+                    <div class="t-icon">{{ task.icon }}</div>
+                    <div class="t-content" style="flex:1;">
+                        <div class="t-day">Day {{ task.day }}</div>
+                        <div class="t-title">{{ task.title }}</div>
+                        <div class="t-detail">{{ task.detail }}</div>
+                    </div>
+                    <div class="t-badge badge-{{ task.status }}">
+                        {% if task.status == 'done' %}✓ Done
+                        {% elif task.status == 'today' %}⚡ Now
+                        {% else %}⏳ Upcoming{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ── FARMER DETAILS ── -->
+        <div class="timeline-section">
+            <div class="section-title">👤 Registered Farm Details</div>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Farmer Name</div>
+                    <div class="detail-value">{{ farmer.name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Village</div>
+                    <div class="detail-value">{{ farmer.village }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Contact</div>
+                    <div class="detail-value">📱 {{ farmer.contact }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Farm Type</div>
+                    <div class="detail-value">{{ farmer.farm_type }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Total Acres</div>
+                    <div class="detail-value">{{ farmer.acres }} Acres</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Seed Quantity</div>
+                    <div class="detail-value">{{ farmer.seed_quantity }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Crop Growing</div>
+                    <div class="detail-value">{{ farmer.crop }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Registered On</div>
+                    <div class="detail-value">{{ farmer.created_at.strftime('%d %b %Y') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ACTION BAR ── -->
+        <div class="action-bar">
+            <a href="/farmer/update/{{ farmer._id }}" class="action-btn btn-blue">✏️ Update Details</a>
+            <a href="/marketplace" class="action-btn btn-secondary">🛒 Go to Marketplace</a>
+            <a href="/farmer/register" class="action-btn btn-primary">➕ Register New Farm</a>
+        </div>
+    </div>
+
+    <script>
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = saved;
+        });
+    </script>
+</body>
+</html>

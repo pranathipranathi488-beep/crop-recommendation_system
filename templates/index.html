@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation System | Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --accent: #ffc107;
+            --text: #ffffff;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Hero Background */
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary-light);
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            background: linear-gradient(to right, #ffffff, #a5d6a7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .cta-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3), 0 0 0 0 rgba(76, 175, 80, 0);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: linear-gradient(135deg, #388e3c 0%, #81c784 100%);
+            box-shadow: 0 15px 30px rgba(46, 125, 50, 0.5), 0 0 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+            border-color: var(--primary-light);
+        }
+
+        .auth-link {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .auth-link:hover {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4);
+        }
+
+
+        .welcome-msg {
+            color: var(--primary-light);
+            font-weight: 600;
+            margin-right: -10px;
+        }
+
+        /* Flash Messages */
+        .flash-container {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .flash {
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .flash-success { background: rgba(76, 175, 80, 0.2); color: #b9f6ca; border: 1px solid rgba(76, 175, 80, 0.3); }
+        .flash-danger { background: rgba(244, 67, 54, 0.2); color: #ff8a80; border: 1px solid rgba(244, 67, 54, 0.3); }
+        .flash-warning { background: rgba(255, 152, 0, 0.2); color: #ffd180; border: 1px solid rgba(255, 152, 0, 0.3); }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* Features Section */
+        .features {
+            padding: 100px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 60px;
+            color: var(--primary-light);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.4s;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-light);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* Language Selector */
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+            padding-right: 35px;
+        }
+
+        .lang-select:hover {
+            border-color: var(--primary-light);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+        }
+
+        .lang-select option {
+            background: #111111;
+            color: #ffffff;
+            padding: 12px;
+        }
+
+
+
+        /* Chatbot Widget */
+        #chatbot-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .chat-toggle:hover { transform: scale(1.1); background: var(--primary-light); }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 300px;
+            height: 400px;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+        }
+
+        .chat-header {
+            background: var(--primary);
+            padding: 15px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg {
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .msg-bot { background: rgba(255,255,255,0.1); align-self: flex-start; }
+        .msg-user { background: var(--primary); align-self: flex-end; }
+
+        .chat-input {
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .features { padding: 50px 20px; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/" data-i18n="nav_home">Home</a>
+            <a href="/recommend" data-i18n="nav_recommend">Recommend</a>
+            <a href="/farmer/register" data-i18n="nav_register">Register Farm</a>
+            <a href="/marketplace" data-i18n="nav_market">Marketplace</a>
+            {% if request.user.is_authenticated %}
+                <a href="/dashboard" data-i18n="nav_dashboard">Dashboard</a>
+            {% endif %}
+            <a href="/about" data-i18n="nav_about">About</a>
+            <a href="/contact" data-i18n="nav_contact">Contact</a>
+            <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+            </select>
+            {% if request.user.is_authenticated %}
+                <span class="welcome-msg" data-i18n="nav_welcome">Hi, {{ request.session.user_name }}</span>
+                <a href="/logout" class="auth-link" data-i18n="nav_logout">Logout</a>
+            {% else %}
+                <a href="/login" data-i18n="nav_login">Login</a>
+                <a href="/signup" class="auth-link" data-i18n="nav_signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: absolute; top: 100px; right: 20px; z-index: 1000; padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.9); color: #000;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 data-i18n="hero_title">Intelligent Crop Recommendation</h1>
+            <p data-i18n="hero_desc">Empowering farmers with data-driven insights. Our system analyzes environmental factors like temperature, humidity, and rainfall to suggest the most profitable crops for your land.</p>
+            <div class="cta-btns">
+                <a href="/recommend" class="btn btn-primary" data-i18n="hero_btn_start">Get Crop Recommendation</a>
+                <a href="/farmer/register" class="btn btn-secondary" data-i18n="hero_btn_register">🌾 Register Your Farm</a>
+                <a href="/marketplace" class="btn btn-secondary" data-i18n="hero_btn_market">🛒 View Marketplace</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2 class="section-title" data-i18n="features_title">Core Features</h2>
+        <div class="features-grid">
+            <div class="feature-card" onclick="openModal('ai')">
+                <span class="feature-icon">🧠</span>
+                <h3 data-i18n="f1_title">AI Recommendation</h3>
+                <p data-i18n="f1_desc">Advanced rule-based logic to suggest the best crops for your soil and climate.</p>
+                <small style="color: var(--primary-light); cursor: pointer;">Click to learn more →</small>
+            </div>
+            <div class="feature-card" onclick="openModal('pest')">
+                <span class="feature-icon">🧪</span>
+                <h3 data-i18n="f2_title">Pesticide Guidance</h3>
+                <p data-i18n="f2_desc">Get instant recommendations for the right pesticides to protect your specific crops.</p>
+                <small style="color: var(--primary-light); cursor: pointer;">Click to learn more →</small>
+            </div>
+            <div class="feature-card" onclick="openModal('water')">
+                <span class="feature-icon">💧</span>
+                <h3 data-i18n="f3_title">Water Management</h3>
+                <p data-i18n="f3_desc">Optimize your resources with precise water quantity requirements for every crop.</p>
+                <small style="color: var(--primary-light); cursor: pointer;">Click to learn more →</small>
+            </div>
+            <div class="feature-card" onclick="openModal('dash')">
+                <span class="feature-icon">📊</span>
+                <h3 data-i18n="f4_title">User Dashboard</h3>
+                <p data-i18n="f4_desc">Keep track of all your previous recommendations and field history in one place.</p>
+                <small style="color: var(--primary-light); cursor: pointer;">Click to learn more →</small>
+            </div>
+            <div class="feature-card" onclick="openModal('sec')">
+                <span class="feature-icon">🔒</span>
+                <h3 data-i18n="f5_title">Secure Profiles</h3>
+                <p data-i18n="f5_desc">Personalized experience with secure login and data privacy for every farmer.</p>
+                <small style="color: var(--primary-light); cursor: pointer;">Click to learn more →</small>
+            </div>
+            <div class="feature-card" onclick="openModal('res')">
+                <span class="feature-icon">📱</span>
+                <h3 data-i18n="f6_title">Responsive Design</h3>
+                <p data-i18n="f6_desc">Access your farming insights from any device, anytime, anywhere in the field.</p>
+                <small style="color: var(--primary-light); cursor: pointer;">Click to learn more →</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── NEW MODULES SECTION ── -->
+    <section style="padding: 80px 50px; background: rgba(0,0,0,0.2);">
+        <h2 class="section-title" style="margin-bottom: 50px;">🚀 New Farming Modules</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px;">
+
+            <div style="background: linear-gradient(135deg, rgba(46,125,50,0.15), rgba(27,94,32,0.08)); border: 1px solid rgba(76,175,80,0.3); border-radius: 24px; padding: 35px; text-align: center; transition: 0.4s;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="font-size: 3rem; margin-bottom: 16px;">🌾</div>
+                <h3 style="font-size: 1.4rem; margin-bottom: 12px; color: var(--primary-light);">Farm Registration</h3>
+                <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem;">Register your farm with details like crop, acres, sowing date. Get a personal farm ID and track everything in one place.</p>
+                <a href="/farmer/register" style="display: inline-block; background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white; padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: 700;">Register Now →</a>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(255,152,0,0.06)); border: 1px solid rgba(255,193,7,0.3); border-radius: 24px; padding: 35px; text-align: center; transition: 0.4s;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
+                <h3 style="font-size: 1.4rem; margin-bottom: 12px; color: #ffc107;">Activity Alerts</h3>
+                <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem;">Get day-by-day task alerts: when to irrigate, fertilize, spray pest control — all automated based on your crop calendar.</p>
+                <a href="/farmer/register" style="display: inline-block; background: linear-gradient(135deg, #f57f17, #ffc107); color: #000; padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: 700;">Start Tracking →</a>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(33,150,243,0.12), rgba(21,101,192,0.06)); border: 1px solid rgba(33,150,243,0.3); border-radius: 24px; padding: 35px; text-align: center; transition: 0.4s;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="font-size: 3rem; margin-bottom: 16px;">🛒</div>
+                <h3 style="font-size: 1.4rem; margin-bottom: 12px; color: #64b5f6;">Crop Marketplace</h3>
+                <p style="color: #aaa; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem;">Buyers can browse registered farmers directly. No middlemen. View crop details, contact number, and expected yield.</p>
+                <a href="/marketplace" style="display: inline-block; background: linear-gradient(135deg, #1565c0, #42a5f5); color: white; padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: 700;">Browse Farmers →</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="tech-showcase">
+        <h2 class="section-title" data-i18n="tech_title">Modern Farming Technology</h2>
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-img">🛸</div>
+                <h3 data-i18n="t1_title">Drone Surveillance</h3>
+                <p data-i18n="t1_desc">Real-time aerial monitoring to detect pest infestations and crop health issues early.</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-img">📡</div>
+                <h3 data-i18n="t2_title">IoT Soil Sensors</h3>
+                <p data-i18n="t2_desc">Continuous monitoring of soil moisture, NPK levels, and temperature via cloud-connected sensors.</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-img">💧</div>
+                <h3 data-i18n="t3_title">Precision Irrigation</h3>
+                <p data-i18n="t3_desc">AI-driven watering systems that reduce water wastage by targeting specific root zones.</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-img">🏗️</div>
+                <h3 data-i18n="t4_title">Vertical Farming</h3>
+                <p data-i18n="t4_desc">Maximizing yield in limited spaces using nutrient-rich water solutions and LED lighting.</p>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .features { padding: 100px 50px; max-width: 1200px; margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .feature-card { background: var(--glass); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; text-align: center; cursor: pointer; }
+        .feature-card:hover { transform: translateY(-10px); border-color: var(--primary-light); background: rgba(255,255,255,0.08); }
+        .feature-icon { font-size: 3rem; margin-bottom: 20px; display: block; }
+        .feature-card h3 { color: var(--primary-light); margin-bottom: 15px; font-size: 1.5rem; }
+        .feature-card p { color: #ccc; line-height: 1.6; font-size: 1rem; }
+
+        .tech-showcase { padding: 80px 50px; background: rgba(255,255,255,0.02); }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px; }
+        .tech-card {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: 0.4s;
+        }
+        .tech-card:hover { border-color: var(--primary-light); transform: translateY(-10px); background: rgba(76, 175, 80, 0.05); }
+        .tech-img { font-size: 3rem; margin-bottom: 20px; }
+        .tech-card h3 { margin-bottom: 15px; color: var(--primary-light); }
+        .tech-card p { color: #aaa; font-size: 0.95rem; line-height: 1.6; }
+    </style>
+
+
+
+
+    <div id="chatbot-widget">
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <span>🌾 AgriBot</span>
+                <span style="cursor:pointer" onclick="toggleChat()">✕</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="msg msg-bot">Hello! I'm your agricultural assistant. How can I help you today?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Ask about crops...">
+                <button class="btn-primary" style="padding: 5px 15px; border-radius: 10px;" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div class="chat-toggle" onclick="toggleChat()">💬</div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                nav_home: "Home", nav_recommend: "Recommend", nav_dashboard: "Dashboard", nav_about: "About", nav_contact: "Contact", nav_login: "Login", nav_signup: "Sign Up", nav_logout: "Logout", nav_welcome: "Hi, {{ request.session.user_name }}", nav_register: "Register Farm", nav_market: "Marketplace",
+                hero_title: "Intelligent Crop Recommendation", hero_desc: "Empowering farmers with data-driven insights. Our system analyzes environmental factors like temperature, humidity, and rainfall to suggest the most profitable crops for your land.", hero_btn_start: "Get Crop Recommendation", hero_btn_learn: "Learn More", hero_btn_register: "🌾 Register Your Farm", hero_btn_market: "🛒 View Marketplace",
+                features_title: "Core Features", f1_title: "AI Recommendation", f1_desc: "Advanced rule-based logic to suggest the best crops for your soil and climate.", f2_title: "Pesticide Guidance", f2_desc: "Get instant recommendations for the right pesticides to protect your specific crops.", f3_title: "Water Management", f3_desc: "Optimize your resources with precise water quantity requirements for every crop.", f4_title: "User Dashboard", f4_desc: "Keep track of all your previous recommendations and field history in one place.", f5_title: "Secure Profiles", f5_desc: "Personalized experience with secure login and data privacy for every farmer.", f6_title: "Responsive Design", f6_desc: "Access your farming insights from any device, anytime, anywhere in the field.",
+                tech_title: "Modern Farming Technology", t1_title: "Drone Surveillance", t1_desc: "Real-time aerial monitoring to detect pest infestations and crop health issues early.", t2_title: "IoT Soil Sensors", t2_desc: "Continuous monitoring of soil moisture, NPK levels, and temperature via cloud-connected sensors.", t3_title: "Precision Irrigation", t3_desc: "AI-driven watering systems that reduce water wastage by targeting specific root zones.", t4_title: "Vertical Farming", t4_desc: "Maximizing yield in limited spaces using nutrient-rich water solutions and LED lighting."
+            },
+            hi: {
+                nav_home: "मुख्य पृष्ठ", nav_recommend: "सिफारिश", nav_dashboard: "डैशबोर्ड", nav_about: "हमारे बारे में", nav_contact: "संपर्क", nav_login: "लॉगिन", nav_signup: "साइन अप", nav_logout: "लॉगआउट", nav_welcome: "नमस्ते, {{ request.session.user_name }}", nav_register: "फार्म रजिस्टर करें", nav_market: "बाज़ार",
+                hero_title: "बुद्धिमान फसल सिफारिश", hero_desc: "किसानों को डेटा-संचालित अंतर्दृष्टि के साथ सशक्त बनाना।", hero_btn_start: "फसल सिफारिश पाएं", hero_btn_learn: "अधिक जानें", hero_btn_register: "🌾 फार्म रजिस्टर करें", hero_btn_market: "🛒 बाज़ार देखें",
+                features_title: "प्रमुख विशेषताएं", f1_title: "एआई सिफारिश", f1_desc: "आपकी मिट्टी और जलवायु के लिए सर्वोत्तम फसलों का सुझाव देने के लिए उन्नत तर्क।", f2_title: "कीटनाशक मार्गदर्शन", f2_desc: "अपनी विशिष्ट फसलों की रक्षा के लिए सही कीटनाशकों के लिए त्वरित सिफारिशें प्राप्त करें।", f3_title: "जल प्रबंधन", f3_desc: "हर फसल के लिए सटीक पानी की मात्रा आवश्यकताओं के साथ अपने संसाधनों को अनुकूलित करें।", f4_title: "उपयोगकर्ता डैशबोर्ड", f4_desc: "अपनी पिछली सभी सिफारिशों और इतिहास को एक ही स्थान पर ट्रैक करें।", f5_title: "सुरक्षित प्रोफाइल", f5_desc: "हर किसान के लिए सुरक्षित लॉगिन और डेटा गोपनीयता के साथ व्यक्तिगत अनुभव।", f6_title: "उत्तरदायी डिजाइन", f6_desc: "खेत में कहीं भी, किसी भी डिवाइस से अपनी कृषि अंतर्दृष्टि तक पहुंचें।",
+                tech_title: "आधुनिक कृषि तकनीक", t1_title: "ड्रोन निगरानी", t1_desc: "कीटों के प्रकोप और फसल स्वास्थ्य संबंधी समस्याओं का शीघ्र पता लगाने के लिए रीयल-टाइम हवाई निगरानी।", t2_title: "IoT मिट्टी सेंसर", t2_desc: "क्लाउड-कनेक्टेड सेंसर के माध्यम से मिट्टी की नमी, NPK स्तर और तापमान की निरंतर निगरानी।", t3_title: "सटीक सिंचाई", t3_desc: "एआई-संचालित पानी प्रणालियाँ जो विशिष्ट जड़ क्षेत्रों को लक्षित करके पानी की बर्बादी को कम करती हैं।", t4_title: "वर्टिकल फार्मिंग", t4_desc: "पोषक तत्वों से भरपूर पानी के घोल और एलईडी लाइटिंग का उपयोग करके सीमित स्थानों में पैदावार को अधिकतम करना।"
+            },
+            te: {
+                nav_home: "హోమ్", nav_recommend: "సిఫార్సు", nav_dashboard: "డ్యాష్‌బోర్డ్", nav_about: "గురించి", nav_contact: "సంప్రదించండి", nav_login: "లాగిన్", nav_signup: "సైన్ అప్", nav_logout: "లాగౌట్", nav_welcome: "నమస్కారం, {{ request.session.user_name }}", nav_register: "ఫార్మ్ నమోదు", nav_market: "మార్కెట్‌ప్లేస్",
+                hero_title: "తెలివైన పంట సిఫార్సు", hero_desc: "డేటా-ఆధారిత అంతర్దృష్టులతో రైతులను శక్తివంతం చేయడం.", hero_btn_start: "పంట సిఫార్సు పొందండి", hero_btn_learn: "మరింత తెలుసుకోండి", hero_btn_register: "🌾 ఫార్మ్ నమోదు చేయండి", hero_btn_market: "🛒 మార్కెట్‌ప్లేస్ చూడండి",
+                features_title: "ముఖ్య లక్షణాలు", f1_title: "AI సిఫార్సు", f1_desc: "మీ మట్టి మరియు వాతావరణానికి ఉత్తమమైన పంటలను సూచించడానికి అధునాతన తర్కం.", f2_title: "పురుగుమందుల మార్గదర్శకత్వం", f2_desc: "మీ పంటలను రక్షించడానికి సరైన పురుగుమందుల కోసం తక్షణ సిఫార్సులను పొందండి.", f3_title: "నీటి నిర్వహణ", f3_desc: "ప్రతి పంటకు ఖచ్చితమైన నీటి పరిమాణ అవసరాలతో మీ వనరులను ఆప్టిమైజ్ చేయండి.", f4_title: "యూజర్ డ్యాష్‌బోర్డ్", f4_desc: "మీ మునుపటి సిఫార్సులను మరియు చరిత్రను ఒకే చోట ట్రాక్ చేయండి.", f5_title: "సురక్షిత ప్రొఫైల్స్", f5_desc: "ప్రతి రైతుకు సురక్షితమైన లాగిన్ మరియు డేటా గోప్యతతో వ్యక్తిగతీకరించిన అనుభవం.", f6_title: "రెస్పాన్సివ్ డిజైన్", f6_desc: "ఎక్కడైనా, ఏ పరికరం నుండైనా మీ వ్యవసాయ అంతర్దృష్టులను పొందండి.",
+                tech_title: "ఆధునిక వ్యవసాయ సాంకేతికత", t1_title: "డ్రోన్ నిఘా", t1_desc: "తెగుళ్ల వ్యాప్తి మరియు పంట ఆరోగ్య సమస్యలను ముందుగానే గుర్తించడానికి నిజ-సమయ వైమానిక పర్యవేక్షణ.", t2_title: "IoT మట్టి సెన్సార్‌లు", t2_desc: "క్లౌడ్-కనెక్ట్ చేయబడిన సెన్సార్ల ద్వారా నేల తేమ, NPK స్థాయిలు మరియు ఉష్ణోగ్రతను నిరంతరం పర్యవేక్షించడం.", t3_title: "ఖచ్చితమైన నీటి పారుదల", t3_desc: "నిర్దిష్ట రూట్ జోన్‌లను లక్ష్యంగా చేసుకోవడం ద్వారా నీటి వృధాను తగ్గించే AI-ఆధారిత నీటి వ్యవస్థలు.", t4_title: "వర్టికల్ ఫార్మింగ్", t4_desc: "పోషకాలు అధికంగా ఉండే నీటి ద్రావణాలు మరియు LED లైటింగ్‌ని ఉపయోగించి పరిమిత ప్రదేశాలలో దిగుబడిని పెంచడం."
+            }
+
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+            applyLanguage(lang);
+        }
+
+        function applyLanguage(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+        }
+
+        // Initialize language
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = savedLang;
+            applyLanguage(savedLang);
+            console.log("System initialized with language:", savedLang);
+        });
+
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const query = input.value.trim().toLowerCase();
+            
+            if (query) {
+                const userMsg = document.createElement('div');
+                userMsg.className = 'msg msg-user';
+                userMsg.innerText = input.value;
+                messages.appendChild(userMsg);
+                
+                setTimeout(() => {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'msg msg-bot';
+                    
+                    let response = "I'm still learning! For specific crop advice, please use our Recommendation tool. What else can I help with?";
+                    
+                    if (query.includes("urea") || query.includes("fertilizer")) {
+                        response = "Fertilizers like Urea provide Nitrogen, which is essential for leaf growth. For soil health, I also recommend organic compost.";
+                    } else if (query.includes("rice")) {
+                        response = "Rice requires high rainfall (above 1500mm) and standing water. It's best grown in the Kharif season.";
+                    } else if (query.includes("wheat")) {
+                        response = "Wheat is a Rabi crop that prefers cooler temperatures (15-25°C) and moderate irrigation.";
+                    } else if (query.includes("pesticide") || query.includes("pest")) {
+                        response = "Common pests can be managed using Neem oil for organic farming, or specific pesticides like Carbofuran for rice.";
+                    } else if (query.includes("soil") || query.includes("ph")) {
+                        response = "Most crops thrive in a pH range of 6.0 to 7.5. If your soil is too acidic, try adding lime.";
+                    } else if (query.includes("weather") || query.includes("rain")) {
+                        response = "Weather is key! High rainfall is great for Rice and Sugarcane, while Groundnut prefers drier conditions.";
+                    } else if (query.includes("hello") || query.includes("hi")) {
+                        response = "Hello! I am AgriBot. Ask me about crops, fertilizers, or soil health!";
+                    } else if (query.includes("thank")) {
+                        response = "You're welcome! Happy farming! 🌱";
+                    }
+
+                    botMsg.innerText = response;
+                    messages.appendChild(botMsg);
+                    messages.scrollTop = messages.scrollHeight;
+                    
+                    // AI Voice Output
+                    speakText(response);
+                }, 800);
+                
+                input.value = '';
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.pitch = 1.1;
+                utterance.rate = 1.0;
+                
+                // Try to find a nice female/friendly voice
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Female'));
+                if (preferredVoice) utterance.voice = preferredVoice;
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        function openModal(featureId) {
+            const modal = document.getElementById('feature-modal');
+            const body = document.getElementById('modal-body');
+            
+            const contents = {
+                ai: {
+                    title: "🧠 AI Recommendation Engine",
+                    text: "Our advanced algorithm uses a weighted scoring system based on 7 environmental and soil parameters:",
+                    list: ["Soil pH (Acidity/Alkalinity)", "Temperature Levels", "Humidity %", "Average Rainfall", "Nutrient Matching", "Historical Yield Data"]
+                },
+                pest: {
+                    title: "🧪 Pesticide Guidance",
+                    text: "Protect your crops with data-driven chemical and biological suggestions:",
+                    list: ["Targeted Insecticide Matching", "Eco-friendly Bio-pesticides", "Dosage Calculators", "Safety Precautions", "Application Timelines"]
+                },
+                water: {
+                    title: "💧 Smart Water Management",
+                    text: "Optimize every drop with precision irrigation insights:",
+                    list: ["Daily Water Requirements (mm)", "Evaporation Rate Monitoring", "Drip Irrigation Scheduling", "Rainwater Harvesting Tips", "Drought Resistance Analysis"]
+                },
+                dash: {
+                    title: "📊 Farmer Dashboard",
+                    text: "Your entire farming history at your fingertips:",
+                    list: ["Past Recommendation Logs", "Profit/Loss Trend Analysis", "Soil Health Improvement Tracking", "Seasonal Performance Reports", "Saved Field Profiles"]
+                },
+                sec: {
+                    title: "🔒 Secure Profiles",
+                    text: "Military-grade protection for your farming data:",
+                    list: ["Encrypted Personal Details", "Secure Search History", "Private Farm Mapping", "No Third-party Data Sharing", "Safe Password Encryption"]
+                },
+                res: {
+                    title: "📱 Responsive Design",
+                    text: "Access your farm from anywhere, on any device:",
+                    list: ["Optimized Mobile Interface", "Offline Mode (Basic Access)", "Low Data Consumption", "Touch-friendly Controls", "Universal Browser Support"]
+                }
+            };
+
+            const content = contents[featureId];
+            if (content) {
+                body.innerHTML = `
+                    <h2 class="modal-title">${content.title}</h2>
+                    <p class="modal-text">${content.text}</p>
+                    <ul class="modal-list">
+                        ${content.list.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="/recommend" class="btn btn-primary">Try Feature Now</a>
+                    </div>
+                `;
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('feature-modal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('feature-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = savedLang;
+            applyLanguage(savedLang);
+        });
+    </script>
+</body>
+</html>
+

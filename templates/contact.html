@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            min-height: 100vh;
+        }
+
+        nav {
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: white; text-decoration: none; }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 300px;
+            animation: slideRight 1s ease;
+        }
+
+        .contact-form {
+            flex: 1.5;
+            min-width: 300px;
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: slideLeft 1s ease;
+        }
+
+        h2 { font-size: 3rem; margin-bottom: 20px; color: var(--primary-light); }
+        .info-item { margin-bottom: 30px; }
+        .info-item h3 { font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
+        .info-item p { color: #ccc; font-size: 1.1rem; }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .flash-success { background: rgba(76, 175, 80, 0.2); color: #b9f6ca; border: 1px solid rgba(76, 175, 80, 0.3); }
+        .flash-danger { background: rgba(244, 67, 54, 0.2); color: #ff8a80; border: 1px solid rgba(244, 67, 54, 0.3); }
+
+        /* Language Selector */
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+            padding-right: 35px;
+        }
+        .lang-select:hover { border-color: var(--primary-light); background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); transform: translateY(-2px); }
+        .lang-select option { background: #111111; color: #ffffff; padding: 12px; }
+
+        @keyframes slideRight { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideLeft { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+    <script>
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            window.location.href = `/?lang=${lang}`;
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/" data-i18n="nav_home">Home</a>
+            <a href="/recommend" data-i18n="nav_recommend">Recommend</a>
+            <a href="/about" data-i18n="nav_about">About</a>
+            <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+            </select>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="contact-info">
+            <h2>Contact Us</h2>
+            <div class="info-item">
+                <h3>Get in Touch</h3>
+                <p>For any queries or suggestions, feel free to contact us.</p>
+            </div>
+            <div class="info-item">
+                <h3>Developer</h3>
+                <p>Pranathi</p>
+                <p>Email: pranathi@example.com</p>
+            </div>
+            <div class="info-item">
+                <h3>College</h3>
+                <p>Your Engineering College Name</p>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: absolute; top: 100px; right: 20px; z-index: 1000; padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.9); color: #000;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+            <form action="/contact" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+
+    <script>
+        const translations = {
+            en: {
+                nav_home: "Home", nav_recommend: "Recommend", nav_about: "About", nav_contact: "Contact"
+            },
+            hi: {
+                nav_home: "मुख्य पृष्ठ", nav_recommend: "सिफारिश", nav_about: "हमारे बारे में", nav_contact: "संपर्क"
+            },
+            te: {
+                nav_home: "హోమ్", nav_recommend: "సిఫార్సు", nav_about: "గురించి", nav_contact: "సంప్రదించండి"
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+            applyLanguage(lang);
+        }
+
+        function applyLanguage(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = savedLang;
+            applyLanguage(savedLang);
+        });
+    </script>
+</body>
+</html>
+

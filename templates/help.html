@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            min-height: 100vh;
+        }
+
+        nav {
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: white; text-decoration: none; }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        h2 { font-size: 3rem; margin-bottom: 40px; text-align: center; color: var(--primary-light); }
+
+        .step-card {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .step-card:hover { background: rgba(255,255,255,0.08); border-color: var(--primary-light); }
+
+        .step-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            opacity: 0.5;
+        }
+
+        .step-content h3 { font-size: 1.8rem; margin-bottom: 10px; }
+        .step-content p { color: #ccc; line-height: 1.6; }
+
+        .note {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+            color: #ffc107;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/recommend">Recommend</a>
+            <a href="/about">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>How to Use This System</h2>
+        
+        <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-content">
+                <h3>Enter Parameters</h3>
+                <p>Navigate to the Recommendation page and enter your field's environmental details: temperature, humidity, rainfall, and soil pH.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-content">
+                <h3>Submit Data</h3>
+                <p>Click on the "Recommend Crop" button to process your data through our intelligent algorithm.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-content">
+                <h3>View Results</h3>
+                <p>The system will provide up to 3 crop suggestions with brief explanations of why they are suitable for your field.</p>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> The recommendations are based on data analysis and may vary with real-world conditions. Always consult with local agricultural experts for critical decisions.
+        </div>
+    </div>
+</body>
+</html>

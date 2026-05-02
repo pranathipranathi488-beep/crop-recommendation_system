@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --accent: #ffc107;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: #0f1a0f;
+            color: white;
+            min-height: 100vh;
+            padding: 50px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, #a5d6a7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .crop-card {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-light);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .crop-card:nth-child(1) { animation-delay: 0.2s; border-left: 5px solid var(--accent); }
+        .crop-card:nth-child(2) { animation-delay: 0.4s; }
+        .crop-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .crop-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .crop-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary-light);
+        }
+
+        .suitability-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(76, 175, 80, 0.2);
+            color: #b9f6ca;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            transition: width 1.5s cubic-bezier(0.1, 0.42, 0.41, 1);
+        }
+
+        .crop-desc {
+            color: #ccc;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .crop-extra {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            text-align: left;
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: linear-gradient(135deg, #388e3c 0%, #81c784 100%);
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.5), 0 0 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-home {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-home:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+            border-color: var(--primary-light);
+        }
+
+        .extra-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .extra-label {
+            color: var(--primary-light);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .extra-value {
+            color: #eee;
+            font-size: 0.85rem;
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 30px;
+            margin-top: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            margin-top: 60px;
+            overflow-x: auto;
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .comparison-table th { color: var(--primary-light); font-weight: 800; text-transform: uppercase; font-size: 0.8rem; }
+        
+        .risk-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .risk-Low { background: rgba(76, 175, 80, 0.2); color: #b9f6ca; }
+        .risk-Medium { background: rgba(255, 193, 7, 0.2); color: #ffe082; }
+        .risk-High { background: rgba(244, 67, 54, 0.2); color: #ff8a80; }
+
+        /* Simulation Styles */
+        .simulation-section {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 30px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .sim-control { display: flex; flex-direction: column; gap: 10px; }
+        .sim-slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            outline: none;
+            accent-color: var(--primary-light);
+        }
+        .sim-control span { font-weight: 800; color: var(--primary-light); font-size: 1.2rem; }
+
+        /* Navbar Styles */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-size: 0.9rem; }
+
+        /* Language Selector */
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 0.9em;
+            padding-right: 30px;
+        }
+        .lang-select:hover { border-color: var(--primary-light); background: #1a1a1a; }
+        .lang-select option { background: #111111; color: #ffffff; }
+
+        @media (max-width: 600px) {
+            .crop-extra { grid-template-columns: 1fr; }
+            nav { padding: 15px 20px; }
+            .nav-links { gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/" data-i18n="nav_home">Home</a>
+            <a href="/recommend" data-i18n="nav_recommend">Recommend</a>
+            <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+            </select>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 100px;">
+
+        <header>
+            <h1 data-i18n="result_title">🌾 Smart Recommendations</h1>
+            <p>Optimal crops for Temp: <b>{{ inputs.temperature }}°C</b> | pH: <b>{{ inputs.ph }}</b> | Rainfall: <b>{{ inputs.rainfall }}mm</b></p>
+        </header>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const tempSim = document.getElementById('temp-sim');
+                const rainSim = document.getElementById('rain-sim');
+                const tempVal = document.getElementById('temp-val');
+                const rainVal = document.getElementById('rain-val');
+
+                const updateSimulation = () => {
+                    tempVal.innerText = tempSim.value + '°C';
+                    rainVal.innerText = rainSim.value + 'mm';
+
+                    document.querySelectorAll('.crop-card').forEach(card => {
+                        const base = parseFloat(card.dataset.baseScore);
+                        // Mock fluctuation logic
+                        const tDiff = Math.abs(tempSim.value - {{ inputs.temperature }});
+                        const rDiff = Math.abs(rainSim.value - {{ inputs.rainfall }});
+                        const penalty = (tDiff * 2) + (rDiff * 0.1);
+                        const newScore = Math.max(10, Math.min(100, base - penalty)).toFixed(1);
+                        
+                        card.querySelector('.score-val').innerText = newScore;
+                        card.querySelector('.progress-fill').style.width = newScore + '%';
+                    });
+                };
+
+                tempSim.addEventListener('input', updateSimulation);
+                rainSim.addEventListener('input', updateSimulation);
+            });
+        </script>
+
+
+        <div class="simulation-section">
+            <h2 style="text-align: center; margin-bottom: 20px;">🔬 What-if Simulation</h2>
+            <p style="text-align: center; color: #aaa; margin-bottom: 30px;">Tweak variables to see how suitability changes</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 800px; margin: 0 auto;">
+                <div class="sim-control">
+                    <label>Temperature ({{ inputs.temperature }}°C)</label>
+                    <input type="range" min="0" max="50" value="{{ inputs.temperature }}" class="sim-slider" id="temp-sim">
+                    <span id="temp-val">{{ inputs.temperature }}°C</span>
+                </div>
+                <div class="sim-control">
+                    <label>Rainfall ({{ inputs.rainfall }}mm)</label>
+                    <input type="range" min="0" max="500" value="{{ inputs.rainfall }}" class="sim-slider" id="rain-sim">
+                    <span id="rain-val">{{ inputs.rainfall }}mm</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-grid">
+            {% for crop in results %}
+            <div class="crop-card" data-base-score="{{ crop.score }}">
+                <span class="crop-icon">{{ crop.icon }}</span>
+                <div class="crop-name">{{ crop.name }}</div>
+                <div class="suitability-badge"><span class="score-val">{{ crop.score }}</span>% Suitability</div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-fill" style="width: {{ crop.score }}%"></div>
+                </div>
+
+                <p class="crop-desc">{{ crop.desc }}</p>
+                
+                <div class="crop-extra">
+                    <div class="extra-item">
+                        <span class="extra-label">📊 Yield (T/Acre)</span>
+                        <span class="extra-value">{{ crop.yield }}</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-label">💰 Est. Profit</span>
+                        <span class="extra-value" style="color: #66bb6a; font-weight: 800;">{{ crop.profit }}</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-label">🚨 Soil Alert</span>
+                        <span class="extra-value" style="color: #ff8a80; font-size: 0.8rem;">{{ crop.soil_alert }}</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-label">📈 Market Demand</span>
+                        <span class="extra-value" style="color: var(--accent);">{{ crop.demand_status }}</span>
+                    </div>
+                </div>
+
+                <div class="organic-box" style="margin-top: 15px; background: rgba(76, 175, 80, 0.1); padding: 10px; border-radius: 8px; border-left: 4px solid var(--primary-light);">
+                    <div style="font-weight: 700; font-size: 0.8rem; color: var(--primary-light);">🍃 Organic Strategy:</div>
+                    <div style="font-size: 0.8rem;">{{ crop.organic_tips }}</div>
+                </div>
+
+
+                <div class="agri-tips" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size: 0.85rem; margin-bottom: 10px;">📦 <b>Storage:</b> Cold storage (4-8°C) recommended.</div>
+                    <div style="font-size: 0.85rem; margin-bottom: 10px;">🚛 <b>Transport:</b> Use moisture-proof containers.</div>
+                    <div style="font-size: 0.85rem;">📈 <b>Demand:</b> High demand expected in next quarter.</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="comparison-section">
+            <h2 style="text-align: center; margin-bottom: 30px;">Side-by-Side Comparison</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        {% for crop in results[:3] %}
+                        <th>{{ crop.name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Suitability</td>
+                        {% for crop in results[:3] %}
+                        <td>{{ crop.score }}%</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Expected Yield</td>
+                        {% for crop in results[:3] %}
+                        <td>{{ crop.yield }} Tons/Acre</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Estimated Profit</td>
+                        {% for crop in results[:3] %}
+                        <td style="color: #66bb6a; font-weight: 700;">{{ crop.profit }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Market Price</td>
+                        {% for crop in results[:3] %}
+                        <td>{{ crop.price }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Risk Analysis</td>
+                        {% for crop in results[:3] %}
+                        <td><span class="risk-badge risk-{{ crop.risk }}">{{ crop.risk }}</span></td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="chart-container">
+            <h2 style="text-align: center; margin-bottom: 20px;">Comparison Analysis</h2>
+            <canvas id="suitabilityChart"></canvas>
+        </div>
+
+
+        <div class="actions">
+            <a href="/recommend" class="btn btn-retry">Try Another Field</a>
+            <a href="/" class="btn btn-home">Go Home</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('suitabilityChart').getContext('2d');
+        const labels = [{% for crop in results %}"{{ crop.name }}",{% endfor %}];
+        const data = [{% for crop in results %}{{ crop.score }},{% endfor %}];
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Suitability Score (%)',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(76, 175, 80, 0.5)',
+                        'rgba(33, 150, 243, 0.5)',
+                        'rgba(255, 193, 7, 0.5)',
+                        'rgba(156, 39, 176, 0.5)',
+                        'rgba(244, 67, 54, 0.5)'
+                    ],
+                    borderColor: [
+                        'rgba(76, 175, 80, 1)',
+                        'rgba(33, 150, 243, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(156, 39, 176, 1)',
+                        'rgba(244, 67, 54, 1)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 15
+                }]
+            },
+
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#aaa' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#aaa' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#fff', font: { family: 'Outfit' } } }
+                }
+            }
+        });
+    <script>
+        const translations = {
+            en: {
+                nav_home: "Home", nav_recommend: "Recommend",
+                result_title: "🌾 Smart Recommendations"
+            },
+            hi: {
+                nav_home: "मुख्य पृष्ठ", nav_recommend: "सिफारिश",
+                result_title: "🌾 स्मार्ट सिफारिशें"
+            },
+            te: {
+                nav_home: "హోమ్", nav_recommend: "సిఫార్సు",
+                result_title: "🌾 స్మార్ట్ సిఫార్సులు"
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+            applyLanguage(lang);
+        }
+
+        function applyLanguage(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = savedLang;
+            applyLanguage(savedLang);
+        });
+    </script>
+</body>
+</html>
+
+

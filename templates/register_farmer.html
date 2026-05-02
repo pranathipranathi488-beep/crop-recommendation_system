@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if edit_mode %}Update Farm Details{% else %}Register Your Farm{% endif %} | CropGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --accent: #ffc107;
+            --bg: #0a0a0a;
+            --glass: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: linear-gradient(135deg, #0a0a0a 0%, #0f2410 100%); color: white; min-height: 100vh; }
+
+        nav {
+            padding: 18px 50px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-light); text-decoration: none; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover { color: var(--primary-light); }
+
+        .lang-select {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+            color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 7px 14px;
+            border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600;
+            outline: none; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 8px center; background-size: 0.9em; padding-right: 28px;
+        }
+
+        .container { max-width: 750px; margin: 0 auto; padding: 50px 20px; }
+
+        .page-header { text-align: center; margin-bottom: 40px; }
+        .page-header h1 { font-size: 2.5rem; background: linear-gradient(to right, #fff, #81c784); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        .page-header p { color: #aaa; font-size: 1rem; }
+
+        .form-card {
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 24px; padding: 45px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); animation: slideUp 0.6s ease;
+        }
+
+        .form-section { margin-bottom: 35px; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--primary-light); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-grid.full { grid-template-columns: 1fr; }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.9rem; color: #ccc; font-weight: 600; }
+        label span { color: #ff6b6b; }
+
+        input, select {
+            width: 100%; padding: 13px 16px;
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+            border-radius: 12px; color: white; font-size: 0.95rem;
+            transition: 0.3s; font-family: 'Outfit', sans-serif;
+        }
+        input:focus, select:focus {
+            outline: none; border-color: var(--primary-light);
+            background: rgba(76,175,80,0.08); box-shadow: 0 0 0 3px rgba(76,175,80,0.15);
+        }
+        select option { background: #1a1a1a; color: white; }
+
+        .hint { font-size: 0.78rem; color: #666; margin-top: 3px; }
+
+        .duration-badge {
+            background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.3);
+            color: var(--primary-light); padding: 10px 15px; border-radius: 10px;
+            font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px;
+        }
+
+        .submit-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            color: white; border: none; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s; letter-spacing: 0.5px; margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(46,125,50,0.3);
+        }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(46,125,50,0.5); }
+
+        .flash-messages { margin-bottom: 20px; }
+        .flash { padding: 12px 18px; border-radius: 10px; margin-bottom: 10px; font-size: 0.9rem; }
+        .flash-success { background: rgba(76,175,80,0.15); color: #b9f6ca; border: 1px solid rgba(76,175,80,0.3); }
+        .flash-danger  { background: rgba(244,67,54,0.15);  color: #ff8a80; border: 1px solid rgba(244,67,54,0.3); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            nav { padding: 15px 20px; }
+            .form-card { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🌱 CropGuard</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/marketplace">Marketplace</a>
+            <a href="/recommend">Recommend</a>
+            <select class="lang-select" id="lang-select" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="te">తెలుగు</option>
+            </select>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            {% if edit_mode %}
+            <h1>✏️ Update Farm Details</h1>
+            <p>Keep your farm information up to date for better alerts</p>
+            {% else %}
+            <h1>🌾 Register Your Farm</h1>
+            <p>Enter your farm details to get personalized crop tracking & alerts</p>
+            {% endif %}
+        </div>
+
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="position: absolute; top: 100px; right: 20px; z-index: 1000; padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.9); color: #000;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+        <div class="form-card">
+            <form method="POST">
+
+                <!-- FARMER INFO -->
+                <div class="form-section">
+                    <div class="section-label">👤 Farmer Information</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Name <span>*</span></label>
+                            <input type="text" name="name" required placeholder="e.g. Raju Kumar"
+                                value="{{ farmer.name if farmer else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Village / Town <span>*</span></label>
+                            <input type="text" name="village" required placeholder="e.g. Nandyal"
+                                value="{{ farmer.village if farmer else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number <span>*</span></label>
+                            <input type="tel" name="contact" required placeholder="e.g. 9876543210"
+                                pattern="[0-9]{10}" maxlength="10"
+                                value="{{ farmer.contact if farmer else '' }}">
+                            <span class="hint">10-digit mobile number</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Farm Type <span>*</span></label>
+                            <select name="farm_type" required>
+                                <option value="">Select type</option>
+                                <option value="Dry Land" {% if farmer and farmer.farm_type == 'Dry Land' %}selected{% endif %}>🏜️ Dry Land</option>
+                                <option value="Wet Land" {% if farmer and farmer.farm_type == 'Wet Land' %}selected{% endif %}>💧 Wet Land</option>
+                                <option value="Garden Land" {% if farmer and farmer.farm_type == 'Garden Land' %}selected{% endif %}>🌿 Garden Land</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FARM DETAILS -->
+                <div class="form-section">
+                    <div class="section-label">🌾 Crop & Farm Details</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Total Acres <span>*</span></label>
+                            <input type="number" name="acres" required min="0.1" step="0.1" placeholder="e.g. 2.5"
+                                value="{{ farmer.acres if farmer else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Seed Quantity (Packets) <span>*</span></label>
+                            <input type="text" name="seed_quantity" required placeholder="e.g. 10 packets"
+                                value="{{ farmer.seed_quantity if farmer else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Selected Crop <span>*</span></label>
+                            <select name="crop" id="crop-select" required onchange="autofillDuration()">
+                                <option value="">Choose a crop</option>
+                                {% for crop_name, dur in crop_durations.items() %}
+                                <option value="{{ crop_name }}"
+                                    {% if farmer and farmer.crop == crop_name %}selected{% endif %}>
+                                    {{ crop_name }} ({{ dur }} days)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Crop Duration (days)</label>
+                            <input type="number" name="duration" id="duration-field" placeholder="Auto-filled"
+                                value="{{ farmer.duration if farmer else '' }}">
+                            <div class="duration-badge" id="duration-badge" style="display:none;">
+                                ⏱️ <span id="duration-text">Estimated growing period</span>
+                            </div>
+                        </div>
+                        <div class="form-group full">
+                            <label>Sowing / Start Date <span>*</span></label>
+                            <input type="date" name="start_date" required id="start-date"
+                                value="{{ farmer.start_date.strftime('%Y-%m-%d') if farmer and farmer.start_date else '' }}">
+                            <span class="hint">The date you planted or plan to plant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    {% if edit_mode %}✏️ Update Farm Details{% else %}🌱 Register My Farm{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const durations = {{ crop_durations | tojson }};
+
+        function autofillDuration() {
+            const crop = document.getElementById('crop-select').value;
+            const field = document.getElementById('duration-field');
+            const badge = document.getElementById('duration-badge');
+            const text  = document.getElementById('duration-text');
+            if (crop && durations[crop]) {
+                field.value = durations[crop];
+                text.textContent = `${durations[crop]} days growing period for ${crop}`;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Set default date to today if empty
+        const dateInput = document.getElementById('start-date');
+        if (!dateInput.value) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        }
+
+        // Language handling
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem('preferred_lang', lang);
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('preferred_lang') || 'en';
+            document.getElementById('lang-select').value = saved;
+            // Auto-fill duration if editing
+            if (document.getElementById('crop-select').value) autofillDuration();
+        });
+    </script>
+</body>
+</html>
